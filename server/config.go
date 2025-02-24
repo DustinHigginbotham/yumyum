@@ -1,6 +1,9 @@
 package main
 
-import "os"
+import (
+	"encoding/base64"
+	"os"
+)
 
 type Config struct {
 	systemPrompt string
@@ -16,10 +19,25 @@ func loadConfig() Config {
 		port = "8666"
 	}
 
+	systemPrompt := os.Getenv("PROMPT")
+	if systemPrompt != "" {
+		systemPrompt = decodePrompt(systemPrompt)
+	}
+
 	return Config{
-		systemPrompt: os.Getenv("PROMPT"),
+		systemPrompt: systemPrompt,
 		accessToken:  os.Getenv("ACCESS_TOKEN"),
 		port:         port,
 		frontendURL:  os.Getenv("FRONTEND_URL"),
 	}
+}
+
+func decodePrompt(prompt string) string {
+
+	decoded, err := base64.StdEncoding.DecodeString(prompt)
+	if err != nil {
+		return ""
+	}
+
+	return string(decoded)
 }
