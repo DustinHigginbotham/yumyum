@@ -61,7 +61,9 @@ jobs:
           npm ci
 
       - name: Build Frontend
-        run: npm run build
+        run: |
+          cd www
+          npm run build
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
@@ -70,5 +72,6 @@ jobs:
 
       - name: Deploy to GCS
         run: |
+          cd www
           gsutil -m rsync -r dist gs://${{ secrets.GCS_BUCKET_NAME }}
           gsutil -m setmeta -r -h "Cache-Control:public, max-age=3600" gs://${{ secrets.GCS_BUCKET_NAME }}
