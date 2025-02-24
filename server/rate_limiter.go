@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	requestLimit  = 1
+	requestLimit  = 2
 	requestPeriod = time.Minute
 )
 
@@ -24,7 +24,12 @@ func (s *Server) rateLimiterMiddleware() func(next http.Handler) http.Handler {
 			// get the user's IP
 			ip := getClientIP(r)
 
-			res, err := rateLimiter.Allow(r.Context(), ip, redis_rate.Limit{Rate: requestLimit, Period: requestPeriod})
+			key := fmt.Sprintf("rate_limit:%s", ip)
+
+			res, err := rateLimiter.Allow(r.Context(), key, redis_rate.Limit{
+				Rate:   requestLimit,
+				Period: requestPeriod,
+			})
 
 			// something happened when checking the rate limit
 			if err != nil {
@@ -33,6 +38,8 @@ func (s *Server) rateLimiterMiddleware() func(next http.Handler) http.Handler {
 				w.Write([]byte(`{"error": "error checking rate limit"}`))
 				return
 			}
+
+			fmt.Println("Limiter:", res)
 
 			if res.Allowed == 0 {
 				w.WriteHeader(http.StatusTooManyRequests)
