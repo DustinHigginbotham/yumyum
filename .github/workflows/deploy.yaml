@@ -72,6 +72,5 @@ jobs:
 
       - name: Deploy to GCS
         run: |
-          cd www/dist
-          gsutil -m rsync -r ./ gs://${{ secrets.GCS_BUCKET_NAME }}
+          gsutil -m rsync -r www/dist gs://${{ secrets.GCS_BUCKET_NAME }}
           gsutil -m setmeta -r -h "Cache-Control:public, max-age=3600" gs://${{ secrets.GCS_BUCKET_NAME }}
