@@ -8,6 +8,9 @@ import (
 	"html/template"
 	"net/http"
 	"strings"
+	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
 const userPrompt = `You are a chef who has just created a new recipe. You named it "{{.Name}}" and it's made with only these ingredients: {{.Ingredients}}. You're excited to share it with the world, but you want to add a backstory to make it more interesting. What's the backstory of your new recipe?`
@@ -15,6 +18,7 @@ const userPrompt = `You are a chef who has just created a new recipe. You named 
 type Server struct {
 	config     Config
 	userPrompt string
+	redis      *redis.Client
 }
 
 func NewServer(config Config) *Server {
@@ -25,8 +29,20 @@ func NewServer(config Config) *Server {
 }
 
 func (s *Server) Start() {
-	// set up our single route
-	http.HandleFunc("/generate", s.handleGenerateBackstory())
+
+	// connect to redis, if defined
+	if s.config.redisURL != "" {
+		s.redis = redis.NewClient(&redis.Options{
+			Addr: s.config.redisURL,
+		})
+
+		limiter := s.rateLimiterMiddleware()
+
+		// set up our single route
+		http.Handle("/generate", limiter(http.HandlerFunc(s.handleGenerateBackstory())))
+	} else {
+		http.Handle("/generate", s.handleGenerateBackstory())
+	}
 
 	fmt.Printf("Server running on port %s\n", s.config.port)
 	err := http.ListenAndServe(fmt.Sprintf(":%s", s.config.port), nil)
@@ -102,11 +118,29 @@ func (s *Server) callOpenAI(prompt string) (*http.Response, error) {
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.config.accessToken))
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{}
+	client := &http.Client{
+		Transport: &http.Transport{
+			ResponseHeaderTimeout: 10 * time.Second, // Only applies to receiving the first header
+		},
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error calling openAI: %w", err)
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		defer resp.Body.Close()
+		return nil, fmt.Errorf("OpenAI returned non-200 status: %d", resp.StatusCode)
+	}
+
 	return resp, nil
+}
+
+func (s *Server) Shutdown() {
+	if s.redis != nil {
+		err := s.redis.Close()
+		if err != nil {
+			fmt.Printf("error closing Redis connection: %v\n", err)
+		}
+	}
 }

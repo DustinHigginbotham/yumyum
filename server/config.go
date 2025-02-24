@@ -10,6 +10,7 @@ type Config struct {
 	accessToken  string
 	port         string
 	frontendURL  string
+	redisURL     string
 }
 
 func loadConfig() Config {
@@ -29,6 +30,7 @@ func loadConfig() Config {
 		accessToken:  os.Getenv("ACCESS_TOKEN"),
 		port:         port,
 		frontendURL:  os.Getenv("FRONTEND_URL"),
+		redisURL:     os.Getenv("REDIS_URL"),
 	}
 }
 
