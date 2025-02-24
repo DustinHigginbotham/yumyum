@@ -68,6 +68,13 @@ func (s *Server) handleGenerateBackstory() http.HandlerFunc {
 
 		defer resp.Body.Close()
 
+		allowOrigin := "*"
+		if s.config.frontendURL != "" {
+			allowOrigin = s.config.frontendURL
+		}
+
+		w.Header().Set("Access-Control-Allow-Origin", allowOrigin)
+
 		streamResponse(w, resp)
 	}
 }

@@ -6,6 +6,7 @@ type Config struct {
 	systemPrompt string
 	accessToken  string
 	port         string
+	frontendURL  string
 }
 
 func loadConfig() Config {
@@ -19,5 +20,6 @@ func loadConfig() Config {
 		systemPrompt: os.Getenv("PROMPT"),
 		accessToken:  os.Getenv("ACCESS_TOKEN"),
 		port:         port,
+		frontendURL:  os.Getenv("FRONTEND_URL"),
 	}
 }
