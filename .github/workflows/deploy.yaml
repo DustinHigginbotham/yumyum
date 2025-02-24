@@ -70,7 +70,10 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
+      - name: Set up GCP SDK
+        uses: google-github-actions/setup-gcloud@v1
+
       - name: Deploy to GCS
         run: |
-          gsutil -m rsync -r www/dist gs://${{ secrets.GCS_BUCKET_NAME }}
+          gsutil -m rsync -r www/dist/* gs://${{ secrets.GCS_BUCKET_NAME }}
           gsutil -m setmeta -r -h "Cache-Control:public, max-age=3600" gs://${{ secrets.GCS_BUCKET_NAME }}
