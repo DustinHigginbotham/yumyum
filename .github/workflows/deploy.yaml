@@ -63,7 +63,7 @@ jobs:
       - name: Build Frontend
         run: |
           cd www
-          npm run build
+          npm run build:production
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
