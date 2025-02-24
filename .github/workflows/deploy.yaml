@@ -36,7 +36,7 @@ jobs:
             --platform managed \
             --region ${{ secrets.GCP_REGION }} \
             --allow-unauthenticated \
-            --set-env-vars "ACCESS_TOKEN=${{ secrets.ACCESS_TOKEN }},PROMPT=${{ secrets.PROMPT }}"
+            --set-env-vars "ACCESS_TOKEN=${{ secrets.ACCESS_TOKEN }},PROMPT='${{ secrets.PROMPT }}'"
 
   deploy-frontend:
     name: Deploy Frontend
