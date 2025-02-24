@@ -1,0 +1,15 @@
+version: '3'
+
+dotenv: ['.task-env']
+
+tasks:
+    api:
+        dir: server
+        desc: "Build and run the API"
+        cmds:
+            - go build && ./yumyum
+    web:
+        dir: www
+        desc: "Build and run the frontend in dev mode"
+        cmds:
+            - npm run dev

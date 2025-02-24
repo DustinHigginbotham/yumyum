@@ -1,0 +1,33 @@
+#root {
+  width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+}
+
+
+.yummy-input-row {
+  /* display: flex;
+  justify-content: center; */
+  margin-top: 32px;
+}
+.yummy-input-row label {
+  display: block;
+}
+.yummy-input-row input, .yummy-input-row textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  font-size: 1em;
+}
+.yummy-input-row textarea {
+  height: 8em;
+}
+.yummy-story-time {
+  text-align: left;
+  margin-top: 32px;
+}

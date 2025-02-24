@@ -1,0 +1,3 @@
+.task-env
+node_modules
+dist
