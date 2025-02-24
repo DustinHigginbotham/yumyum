@@ -40,7 +40,6 @@ jobs:
             --region ${{ secrets.GCP_REGION }} \
             --allow-unauthenticated \
             --vpc-connector=${{ secrets.GCP_VPC_CONNECTOR }} \
-            --egress-settings=private-ranges-only \
             --set-env-vars "REDIS_URL=${{ secrets.REDIS_URL }},FRONTEND_URL=${{ secrets.FRONTEND_URL }},ACCESS_TOKEN=${{ secrets.ACCESS_TOKEN }},PROMPT=$(cat encoded_prompt.txt)"
 
   deploy-frontend:
