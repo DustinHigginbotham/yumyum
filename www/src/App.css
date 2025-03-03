@@ -1,36 +1,100 @@
+/* Styles for mobile first */
 #root {
-  width: 800px;
+  width: 100%;
+  max-width: 600px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   text-align: center;
 }
 
 h1 {
   margin: 0;
+  font-size: 2rem;
 }
 
 .yummy-error {
   color: red;
+  font-size: 1em;
 }
 
 .yummy-input-row {
-  /* display: flex;
-  justify-content: center; */
-  margin-top: 32px;
+  margin-top: 24px;
 }
+
 .yummy-input-row label {
   display: block;
-}
-.yummy-input-row input, .yummy-input-row textarea {
-  width: 100%;
-  padding: 8px;
-  margin-top: 8px;
   font-size: 1em;
+  margin-bottom: 4px;
 }
+
+.yummy-input-row input,
 .yummy-input-row textarea {
-  height: 8em;
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
+
+.yummy-input-row textarea {
+  height: 6em;
+  resize: vertical;
+}
+
 .yummy-story-time {
   text-align: left;
-  margin-top: 32px;
+  margin-top: 24px;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Now apply styles to larger screens */
+@media (min-width: 768px) {
+  #root {
+    max-width: 800px;
+    padding: 2rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  .yummy-input-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .yummy-input-row label {
+    font-size: 1.1em;
+  }
+
+  .yummy-input-row input,
+  .yummy-input-row textarea {
+    max-width: 600px;
+    font-size: 1.1rem;
+  }
+
+  .yummy-story-time {
+    font-size: 1.2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  #root {
+    max-width: 900px;
+  }
+
+  h1 {
+    font-size: 3rem;
+  }
+
+  .yummy-input-row input,
+  .yummy-input-row textarea {
+    max-width: 700px;
+  }
+
+  .yummy-story-time {
+    font-size: 1.3rem;
+  }
 }
