@@ -1,0 +1,2 @@
+PROMPT="base64 encoded string of your system prompt"
+ACCESS_TOKEN="your access token for OpenAI"

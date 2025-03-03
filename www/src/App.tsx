@@ -8,6 +8,7 @@ function App() {
   const [ ingredients, setIngredients ] = useState('');
   
   const {
+    error,
     story,
     isLoading,
     isWriting,
@@ -49,6 +50,7 @@ function App() {
 
         <div className="yummy-input-row submit">
           <button type="submit" disabled={isLoading}>Generate</button>
+          {error && <div className="yummy-error">There was an error generating your recipe backstory!</div>}
         </div>
       </form>
 

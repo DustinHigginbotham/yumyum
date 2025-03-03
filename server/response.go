@@ -17,17 +17,26 @@ type OpenAIMessage struct {
 	} `json:"choices"`
 }
 
-// streamResponse is a helper function that sets up the event stream, converts the data from OpenAI,
-// and then streams it to the client
-func streamResponse(w http.ResponseWriter, resp *http.Response) {
-
+func createStream(w http.ResponseWriter) (http.Flusher, error) {
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
-		http.Error(w, "Streaming not supported", http.StatusInternalServerError)
+		return nil, fmt.Errorf("streaming not supported")
+	}
+
+	return flusher, nil
+}
+
+// streamResponse is a helper function that sets up the event stream, converts the data from OpenAI,
+// and then streams it to the client
+func streamResponse(w http.ResponseWriter, resp *http.Response) {
+
+	flusher, err := createStream(w)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 

@@ -9,6 +9,9 @@ h1 {
   margin: 0;
 }
 
+.yummy-error {
+  color: red;
+}
 
 .yummy-input-row {
   /* display: flex;

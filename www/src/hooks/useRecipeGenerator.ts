@@ -13,6 +13,7 @@ export function useRecipeGenerator() {
     const [ isLoading, setIsLoading ] = useState(false);
     const [ isWriting, setIsWriting ] = useState(false);
     const [ eventSource, setEventSource ] = useState<EventSource | null>(null);
+    const [ error, setError ] = useState<any>(null);
 
     const accumulatedStoryRef = useRef('');
 
@@ -22,10 +23,13 @@ export function useRecipeGenerator() {
         if (!eventSource) return;
 
         eventSource.addEventListener('message', async (ev: MessageEvent) => {
+
             const { data } = ev;
 
             if (isLoading) setIsLoading(false);
             if (!isWriting) setIsWriting(true);
+
+            setError(null);
 
             if (data === '[DONE]') {
                 setIsWriting(false);
@@ -38,7 +42,20 @@ export function useRecipeGenerator() {
             setStory(await marked.parse(accumulatedStoryRef.current));
         });
 
-        return () => eventSource.close();
+        eventSource.addEventListener('error', (error: Event) => {
+            setError(error);
+            console.error('EventSource error:', error);
+            setIsWriting(false);
+            setIsLoading(false);
+            eventSource.close();
+            setEventSource(null);
+        });
+
+        return () => {
+            if (eventSource) {
+                eventSource.close();
+            }
+        };
     }, [eventSource]);
 
     const generateRecipe = useCallback(async (name: string, ingredients: string) => {
@@ -60,6 +77,7 @@ export function useRecipeGenerator() {
         story,
         isWriting,
         isLoading,
+        error,
         generateRecipe,
         copyToClipboard,
     };

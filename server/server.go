@@ -32,6 +32,7 @@ func (s *Server) Start() {
 
 	// connect to redis, if defined
 	if s.config.redisURL != "" {
+
 		s.redis = redis.NewClient(&redis.Options{
 			Addr: s.config.redisURL,
 		})
@@ -39,9 +40,9 @@ func (s *Server) Start() {
 		limiter := s.rateLimiterMiddleware()
 
 		// set up our single route
-		http.Handle("/generate", limiter(http.HandlerFunc(s.handleGenerateBackstory())))
+		http.Handle("GET /generate", s.corsMiddleware(limiter(s.handleGenerateBackstory())))
 	} else {
-		http.Handle("/generate", s.handleGenerateBackstory())
+		http.Handle("GET /generate", s.corsMiddleware(s.handleGenerateBackstory()))
 	}
 
 	fmt.Printf("Server running on port %s\n", s.config.port)
@@ -55,15 +56,19 @@ func (s *Server) handleGenerateBackstory() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
+		// Pull the query parameters from the URL
 		q := r.URL.Query()
 		name := q.Get("name")
 		ingredients := q.Get("ingredients")
 
+		// We are going to use a Go template to replace the placeholders in the userPrompt
+		// with the actual values from the query parameters
 		data := map[string]string{
 			"Name":        name,
 			"Ingredients": ingredients,
 		}
 
+		// Create a buffer to hold the parsed prompt
 		promptBuffer := new(bytes.Buffer)
 		t := template.Must(template.New("recipe").Parse(strings.ReplaceAll(s.userPrompt, "\\n", "\n")))
 		err := t.Execute(promptBuffer, &data)
@@ -75,6 +80,7 @@ func (s *Server) handleGenerateBackstory() http.HandlerFunc {
 
 		decodedPrompt := html.UnescapeString(promptBuffer.String())
 
+		// Actually make the call to OpenAI with the decoded prompt
 		resp, err := s.callOpenAI(decodedPrompt)
 		if err != nil {
 			fmt.Printf("error calling OpenAI: %v\n", err)
@@ -82,14 +88,14 @@ func (s *Server) handleGenerateBackstory() http.HandlerFunc {
 			return
 		}
 
-		defer resp.Body.Close()
-
-		allowOrigin := "*"
-		if s.config.frontendURL != "" {
-			allowOrigin = s.config.frontendURL
+		// doesn't happen too often, but let's check if the response is nil
+		if resp == nil {
+			fmt.Println("response from OpenAI was nil")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 
-		w.Header().Set("Access-Control-Allow-Origin", allowOrigin)
+		defer resp.Body.Close()
 
 		streamResponse(w, resp)
 	}
