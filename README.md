@@ -2,7 +2,7 @@
 Crafting the perfect recipe backstory can be time-consuming, and let's be honest, not everyone has a heartwarming tale about artisanal rosemary or a life-changing bowl of soup. But don't worry, we've got you covered!
 
 ### What is this?
-YumYum is a **wholesome, AI-powered food blog post generator**, except... well, something seems *off*. While it starts as a cheerful and nostalgic food blog, the story subtly unravels into **absurdity and psychological horror**. But don't worry, this is all **perfectly normal**. AI, right?
+YumYum is a wholesome, AI-powered food blog post generator, except... well, something seems *off*. While it starts as a cheerful and nostalgic food blog, the story subtly unravels into absurdity and psychological horror. But don't worry, this is all perfectly normal. AI, right?
 
 ### Features
 - AI-generated recipe backstories that start normal... but don't take that for granted.
@@ -51,7 +51,7 @@ task web
 ```
 
 ## Known Issues & Bugs
-- There is a **slight** issue where the AI-generated stories become possessed by some unknown force. This is expected behavior.
+- There is a *slight* issue where the AI-generated stories become possessed by some unknown force. This is expected behavior.
 - If you experience excessive existential dread, try rebooting your computer... three times. Or clear your cache.
 
 ## Contributing
